@@ -64,7 +64,7 @@ if (!function_exists('make_directories')) {
 
 if (!function_exists('get_namespace')) {
     function get_namespace() {
-        if (config('app.env') === 'testing') {
+        if (config('app.env') === 'package') {
             return 'Tychovbh\\LaravelCrud\\Tests\\App\\';
         }
         return 'App\\';
