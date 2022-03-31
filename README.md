@@ -6,11 +6,11 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/tychovbh/laravel-crud.svg?style=flat-square)](https://packagist.org/packages/tychovbh/laravel-crud)
 
 
->Laravel Crud is a small package which delivers out of the box CRUD actions like: `index`, `show`, `store`, `update` and `delete`. You only have to define your routes and point them to the CRUD Controller.
+Laravel Crud is a small package which delivers out of the box CRUD actions like: `index`, `show`, `store`, `update` and `delete`. You only have to define your routes and point them to the CRUD Controller.
 
 <img src="https://laravel-crud.nl/img/laravel-crud.png" />
 
->Read the full documentation here: [https://laravel-crud.nl](https://laravel-crud.nl){:target="_blank"}
+>Read the full documentation here: [https://laravel-crud.nl](https://laravel-crud.nl)
 
 ## Changelog
 
