@@ -25,7 +25,7 @@ trait HasParams
         $customParams = self::customParams($model, $query, $params);
 
         foreach ($params as $param => $value) {
-            if (method_exists($customParams, $param)) {
+            if ($customParams && method_exists($customParams, $param)) {
                 $customParams->{$param}($value);
                 continue;
             }
