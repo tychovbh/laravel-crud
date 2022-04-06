@@ -4,6 +4,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tychovbh\LaravelCrud\Tests\App\Models\Page;
 use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
@@ -57,7 +58,8 @@ class StoreTest extends TestCase
             ->assertStatus(201)
             ->assertExactJson([
                 'data' => [
-                    'title' => $post->title
+                    'title' => $post->title,
+                    'title_short' => Str::limit($post->title, 3),
                 ]
             ]);
 

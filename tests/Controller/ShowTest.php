@@ -5,6 +5,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
 use Tychovbh\LaravelCrud\Tests\TestCase;
@@ -68,7 +69,8 @@ class ShowTest extends TestCase
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => [
-                    'title' => $post->title
+                    'title' => $post->title,
+                    'title_short' => Str::limit($post->title, 3),
                 ]
             ]);
     }

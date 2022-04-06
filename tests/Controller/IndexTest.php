@@ -4,6 +4,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tychovbh\LaravelCrud\Tests\App\Models\Page;
 use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
@@ -98,6 +99,46 @@ class IndexTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJson([
                 'data' => [$user->toArray()]
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanIndexWithFields()
+    {
+        $users = User::factory()->count(4)->create();
+
+        // Request fields as string
+        $this->getJson(route('users.index', ['select' => 'name,email']))
+            ->assertStatus(200)
+            ->assertExactJson([
+                'data' => $users->map(fn(User $user) => $user->only('email', 'name'))
+            ]);
+
+
+        // Request fields as array
+        $this->getJson(route('users.index', ['select' => ['email', 'name']]))
+            ->assertStatus(200)
+            ->assertExactJson([
+                'data' => $users->map(fn(User $user) => $user->only('email', 'name'))
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanIndexWithFieldsAndResource()
+    {
+        $posts = Post::factory()->count(4)->create();
+
+        $this->getJson(route('posts.index', ['select' => 'title']))
+            ->assertStatus(200)
+            ->assertExactJson([
+                'data' => $posts->map(fn(Post $post) => [
+                    'title' => $post->title,
+                    'title_short' => Str::limit($post->title, 3)
+                ])
             ]);
     }
 

@@ -4,6 +4,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
 use Tychovbh\LaravelCrud\Tests\TestCase;
@@ -43,7 +44,8 @@ class UpdateTest extends TestCase
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => [
-                    'title' => $update->title
+                    'title' => $update->title,
+                    'title_short' => Str::limit($update->title, 3),
                 ]
             ]);
 

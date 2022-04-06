@@ -3,6 +3,7 @@
 namespace Tychovbh\LaravelCrud\Tests\App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 class PostResource extends JsonResource
 {
@@ -15,7 +16,8 @@ class PostResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'title' => $this->title
+            'title' => $this->title,
+            'title_short' => Str::limit($this->title, 3)
         ];
     }
 }

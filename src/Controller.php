@@ -128,20 +128,37 @@ class Controller
     }
 
     /**
+     * Start request query.
+     * @param Request $request
+     */
+    private function query(Request $request): Builder
+    {
+        $model = $this->model($request);
+        $query = $model::query();
+
+        $params = $request->toArray();
+
+        if ($params && method_exists($model, 'params')) {
+            $query = $model::params($params);
+        }
+
+        $select = $request->get('select') ?? ['*'];
+
+        if (is_string($select)) {
+            $select = explode(',', $select);
+        }
+
+        return $query->select($select);
+    }
+
+    /**
      * Index records.
      * @param Request $request
      * @return mixed
      */
     public function index(Request $request): mixed
     {
-        $model = $this->model($request);
-        $params = $request->toArray();
-
-        $query = $model::query();
-        if ($params && method_exists($model, 'params')) {
-            $query = $model::params($params);
-        }
-
+        $query = $this->query($request);
         return $this->responseIndex($request, $query);
     }
 
@@ -153,13 +170,9 @@ class Controller
      */
     public function show(Request $request, int $id): mixed
     {
-        $model = $this->model($request);
-        $params = $request->toArray();
+        $query = $this->query($request);
+        $query->where('id', $id);
 
-        $query = $model::query()->where('id', $id);
-        if ($params && method_exists($model, 'params')) {
-            $query = $model::params($params);
-        }
 
         return $this->responseShow($request, $query->firstOrFail());
     }
