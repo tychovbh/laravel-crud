@@ -2,6 +2,7 @@
 
 namespace Tychovbh\LaravelCrud\Tests\App\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tychovbh\LaravelCrud\Tests\Database\Factories\UserFactory;
@@ -14,17 +15,17 @@ class User extends Authenticatable
     /**
      * @var array
      */
-    protected $fillable = ['name', 'email'];
+    protected $fillable = ['name', 'email', 'verified'];
 
     /**
      * @var array
      */
-    protected array $params = ['name', 'email'];
+    protected array $params = ['name', 'email', 'verified'];
 
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory<static>
+     * @return Factory<static>
      */
     protected static function newFactory()
     {

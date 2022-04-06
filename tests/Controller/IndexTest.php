@@ -4,6 +4,8 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tychovbh\LaravelCrud\Tests\App\Models\Page;
+use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
 use Tychovbh\LaravelCrud\Tests\TestCase;
 
@@ -96,6 +98,54 @@ class IndexTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJson([
                 'data' => [$user->toArray()]
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanIndexDetectResource()
+    {
+        $posts = Post::factory()->count(2)->create();
+
+        $this->getJson(route('posts.index', ['paginate' => 2]))
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => $posts->map(fn(Post $post) => $post->only('title'))->toArray(),
+                'meta' => [
+                    'current_page' => 1
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanIndexDetectCollection()
+    {
+        $posts = Page::factory()->count(2)->create();
+
+        $this->getJson(route('pages.index', ['paginate' => 2]))
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => $posts->toArray(),
+                'meta' => [
+                    'current_page' => 1
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanIndexResourceOff()
+    {
+        $posts = Page::factory()->count(2)->create();
+
+        $this->getJson(route('pages.index', ['resource' => 'off']))
+            ->assertStatus(200)
+            ->assertExactJson([
+                'data' => $posts->toArray(),
             ]);
     }
 }

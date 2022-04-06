@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Tychovbh\LaravelCrud\Controller;
 use Tychovbh\LaravelCrud\Routes\Routes;
 
-class ModelRoute implements Routes
+class Name implements Routes
 {
     /**
      * Load User Routes.

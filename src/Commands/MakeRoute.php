@@ -7,19 +7,20 @@ use Illuminate\Support\Str;
 
 class MakeRoute extends Command
 {
-    public $signature = 'make:route {name : The route name (singular)}';
+    public $signature = 'make:route {name : The name of the class}';
 
     public $description = 'Make routes';
 
     public function handle(): int
     {
         $name = $this->argument('name');
-        $filename = $name . 'Route';
-        $file = sprintf('%s/app/Routes/%s.php', base_path(), $filename);
+        $model = get_namespace(). 'Models\\' . Str::replace('Route', '', $name);
+        $model = new $model();
+        $file = sprintf('%s/app/Routes/%s.php', base_path(), $name);
 
         file_replace('Route.php', [
-            'Model' => $name,
-            '{models}' => Str::lower(Str::plural($name))
+            'Name' => $name,
+            '{models}' => Str::lower($model->getTable())
         ], $file, __DIR__);
 
         $this->comment('All done');

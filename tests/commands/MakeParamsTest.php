@@ -12,7 +12,7 @@ class MakeParamsTest extends TestCase
      */
     public function itCanCreateParams()
     {
-        $this->artisan('make:params User')
+        $this->artisan('make:params UserParams')
             ->assertSuccessful();
     }
 }

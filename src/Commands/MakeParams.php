@@ -6,18 +6,17 @@ use Illuminate\Console\Command;
 
 class MakeParams extends Command
 {
-    public $signature = 'make:params {name : The params name (singular)}';
+    public $signature = 'make:params {name : The name of the class}';
 
     public $description = 'Make a Custom Params filter';
 
     public function handle(): int
     {
         $name = $this->argument('name');
-        $filename = $name . 'Params';
-        $file = sprintf('%s/app/Params/%s.php', base_path(), $filename);
+        $file = sprintf('%s/app/Params/%s.php', base_path(), $name);
 
         file_replace('Params.php', [
-            'Model' => $name,
+            'Name' => $name,
         ], $file, __DIR__);
 
         $this->comment('All done');

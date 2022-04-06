@@ -4,6 +4,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
 use Tychovbh\LaravelCrud\Tests\TestCase;
 
@@ -27,6 +28,26 @@ class UpdateTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('users', $expected);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanStoreDetectResource()
+    {
+        $post = Post::factory()->create();
+        $update = Post::factory()->make();
+        $expected = array_merge(['id' => $post->id], $update->toArray());
+
+        $this->putJson(route('posts.update', ['id' => $post->id]), $update->toArray())
+            ->assertStatus(200)
+            ->assertExactJson([
+                'data' => [
+                    'title' => $update->title
+                ]
+            ]);
+
+        $this->assertDatabaseHas('posts', $expected);
     }
 
     /**

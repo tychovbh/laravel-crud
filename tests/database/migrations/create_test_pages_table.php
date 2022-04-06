@@ -8,11 +8,10 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('pages', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->boolean('verified')->default(0);
+            $table->string('title');
+            $table->string('url');
             $table->timestamps();
         });
     }

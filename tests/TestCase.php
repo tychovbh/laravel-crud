@@ -4,7 +4,9 @@ namespace Tychovbh\LaravelCrud\Tests;
 
 use Tychovbh\LaravelCrud\Tests\App\Kernel;
 use Tychovbh\LaravelCrud\LaravelCrudServiceProvider;
+use Tychovbh\LaravelCrud\Tests\App\Routes\PostRoute;
 use Tychovbh\LaravelCrud\Tests\App\Routes\UserRoute;
+use Tychovbh\LaravelCrud\Tests\App\Routes\PageRoute;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -29,6 +31,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getEnvironmentSetUp($app)
     {
         UserRoute::routes();
+        PostRoute::routes();
+        PageRoute::routes();
     }
 
     protected function setUp(): void

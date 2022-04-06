@@ -4,7 +4,8 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Lang;
+use Tychovbh\LaravelCrud\Tests\App\Models\Page;
+use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
 use Tychovbh\LaravelCrud\Tests\TestCase;
 
@@ -17,16 +18,50 @@ class StoreTest extends TestCase
      */
     public function itCanStore()
     {
+        $page = Page::factory()->make();
+
+        $this->postJson(route('pages.store'), $page->toArray())
+            ->assertStatus(201)
+            ->assertJson([
+                'data' => $page->toArray()
+            ]);
+
+        $this->assertDatabaseHas('pages', $page->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanStoreWithAuth()
+    {
         $auth = User::factory()->create();
         $user = User::factory()->make();
 
         $this->actingAs($auth)->postJson(route('users.store'), $user->toArray())
-            ->assertStatus(200)
+            ->assertStatus(201)
             ->assertJson([
                 'data' => $user->toArray()
             ]);
 
         $this->assertDatabaseHas('users', $user->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanStoreDetectResource()
+    {
+        $post = Post::factory()->make();
+
+        $this->postJson(route('posts.store'), $post->toArray())
+            ->assertStatus(201)
+            ->assertExactJson([
+                'data' => [
+                    'title' => $post->title
+                ]
+            ]);
+
+        $this->assertDatabaseHas('posts', $post->toArray());
     }
 
     /**

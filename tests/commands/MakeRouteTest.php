@@ -12,7 +12,7 @@ class MakeRouteTest extends TestCase
      */
     public function itCanCreateRoute()
     {
-        $this->artisan('make:route User')
+        $this->artisan('make:route UserRoute')
         ->assertSuccessful();
     }
 }

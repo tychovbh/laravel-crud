@@ -3,7 +3,7 @@ namespace App\Params;
 
 use Tychovbh\LaravelCrud\Params\Params;
 
-class ModelParams extends Params
+class Name extends Params
 {
 //    /**
 //     * Search records.
