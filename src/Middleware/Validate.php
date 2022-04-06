@@ -38,7 +38,7 @@ class Validate
         $name = $request->route()->getName();
         $pieces = explode('.', $name);
         $class = sprintf(
-            '%sHttp\\Requests\\%s%s',
+            '%sHttp\\Requests\\%s%sRequest',
             get_namespace(),
             Str::ucfirst($pieces[1]),
             Str::ucfirst(Str::singular($pieces[0]))

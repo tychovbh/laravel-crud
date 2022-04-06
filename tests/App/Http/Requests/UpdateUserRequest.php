@@ -4,7 +4,7 @@ namespace Tychovbh\LaravelCrud\Tests\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUser extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class StoreUser extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|min:2',
-            'email' => 'required|email'
+            'name' => 'min:2',
+            'email' => 'email'
         ];
     }
 }
