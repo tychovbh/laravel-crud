@@ -18,5 +18,6 @@ class Name implements Routes
         Route::post('/{models}', [Controller::class, 'store'])->name('{models}.store');
         Route::put('/{models}/{model}', [Controller::class, 'update'])->name('{models}.update');
         Route::delete('/{models}/{model}', [Controller::class, 'destroy'])->name('{models}.destroy');
+        Route::delete('/{models}/{model}/force', [Controller::class, 'forceDestroy'])->name('{models}.forceDestroy');
     }
 }

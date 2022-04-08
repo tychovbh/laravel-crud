@@ -223,4 +223,16 @@ class Controller
             'deleted' => $model->delete()
         ]);
     }
+
+    /**
+     * Force Delete record.
+     * @param Model $model
+     * @return JsonResponse
+     */
+    public function forceDestroy(Model $model): JsonResponse
+    {
+        return response()->json([
+            'deleted' => $model ? $model->forceDelete() : false
+        ]);
+    }
 }

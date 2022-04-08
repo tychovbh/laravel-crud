@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
  * @package Tychovbh\LaravelCrud\Contracts
  * @property array $params
  */
-trait HasParams
+trait GetParams
 {
     /**
      * Apply params.
