@@ -74,9 +74,9 @@ class StoreTest extends TestCase
         $user = User::factory()->make();
 
         $this->postJson(route('users.store'), $user->toArray())
-            ->assertStatus(403)
+            ->assertStatus(401)
             ->assertJson([
-                'message' => 'This action is unauthorized.',
+                'message' => 'Unauthenticated.',
             ]);
     }
 

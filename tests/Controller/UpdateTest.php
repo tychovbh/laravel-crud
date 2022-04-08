@@ -22,7 +22,7 @@ class UpdateTest extends TestCase
         $update = User::factory()->make();
         $expected = array_merge(['id' => $user->id], $update->toArray());
 
-        $this->putJson(route('users.update', ['id' => $user->id]), $update->toArray())
+        $this->putJson(route('users.update', ['user' => $user->id]), $update->toArray())
             ->assertStatus(200)
             ->assertJson([
                 'data' => $expected
@@ -40,7 +40,7 @@ class UpdateTest extends TestCase
         $update = Post::factory()->make();
         $expected = array_merge(['id' => $post->id], $update->toArray());
 
-        $this->putJson(route('posts.update', ['id' => $post->id]), $update->toArray())
+        $this->putJson(route('posts.update', ['post' => $post->id]), $update->toArray())
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => [
@@ -59,7 +59,7 @@ class UpdateTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->putJson(route('users.update', ['id' => $user->id]), ['email' => 'test'])
+        $this->putJson(route('users.update', ['user' => $user->id]), ['email' => 'test'])
             ->assertStatus(422)
             ->assertJson([
                 'message' => 'The email must be a valid email address.',

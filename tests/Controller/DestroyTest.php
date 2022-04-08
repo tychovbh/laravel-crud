@@ -19,7 +19,7 @@ class DestroyTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->deleteJson(route('users.destroy', ['id' => $user->id]))
+        $this->deleteJson(route('users.destroy', ['user' => $user->id]))
             ->assertStatus(200)
             ->assertJson([
                 'deleted' => true
@@ -35,7 +35,7 @@ class DestroyTest extends TestCase
     {
         $post = Post::factory()->create();
 
-        $this->deleteJson(route('posts.destroy', ['id' => $post->id]))
+        $this->deleteJson(route('posts.destroy', ['post' => $post->id]))
             ->assertStatus(200)
             ->assertJson([
                 'deleted' => true
@@ -47,8 +47,6 @@ class DestroyTest extends TestCase
         ]);
     }
 
-
-
     /**
      * @test
      */
@@ -57,12 +55,32 @@ class DestroyTest extends TestCase
         $post = Post::factory()->create();
         $post->delete();
 
-        $this->deleteJson(route('posts.forceDestroy', ['id' => $post->id]))
+        $this->deleteJson(route('posts.forceDestroy', ['post' => $post->id]))
             ->assertStatus(200)
             ->assertJson([
                 'deleted' => true
             ]);
 
         $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRestoreDestroyed()
+    {
+        $post = Post::factory()->create();
+        $post->delete();
+
+        $this->putJson(route('posts.restore', ['post' => $post->id]))
+            ->assertStatus(200)
+            ->assertJson([
+                'restored' => true
+            ]);
+
+        $this->assertDatabaseHas('posts', [
+            'id' => $post->id,
+            'deleted_at' => null
+        ]);
     }
 }

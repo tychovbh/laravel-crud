@@ -2,16 +2,56 @@
 
 namespace Tychovbh\LaravelCrud;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Tychovbh\LaravelCrud\Tests\App\Models\User;
 
+
+/**
+ * @property string model
+ * @property string name
+ * @property string method
+ */
 class Controller
 {
+    /**
+     * Controller constructor.
+     */
+    public function __construct()
+    {
+        $this->name = $this->name(request());
+        $this->model = $this->model();
+        $this->method = $this->method(request());
+
+        app()->bind(Model::class, $this->model);
+
+        Route::bind(Str::lower($this->name), fn(int $id) => $this->findModel($id));
+        Route::bind('id', fn(int $id) => $this->findModel($id));
+    }
+
+    /**
+     * Find model.
+     * @param int $id
+     * @return Model
+     */
+    private function findModel(int $id): Model
+    {
+        $query = $this->query(request());
+        $query->where('id', $id);
+
+        if (in_array($this->method, ['forceDestroy', 'restore'])) {
+            $query->onlyTrashed();
+        }
+
+        return $query->firstOrFail();
+    }
+
     /**
      * The request name.
      * @param Request $request
@@ -78,9 +118,9 @@ class Controller
             return is_subclass_of($class, ResourceCollection::class) ? new $class($data) : $class::collection($data);
         }
 
-        $class .= $this->name($request);
+        $class .= $this->name;
 
-        $collection = $class . 'Collection';
+        $collection = $class . $this->name . 'Collection';
         if (class_exists($collection)) {
             $data = $paginate ? $query->paginate($paginate) : $query->get();
             return new $collection($data);
@@ -106,7 +146,7 @@ class Controller
     private function responseShow(Request $request, Model $model, int $status = 200): mixed
     {
         $class = get_namespace() . 'Http\\Resources\\';
-        $class .= $request->get('resource') ?? $this->name($request) . 'Resource';
+        $class .= $request->get('resource') ?? $this->name . 'Resource';
 
         if ($request->get('resource') === 'off' || !class_exists($class)) {
             return response()->json([
@@ -119,12 +159,11 @@ class Controller
 
     /**
      * Retrieve model.
-     * @param Request $request
      * @return string
      */
-    private function model(Request $request): string
+    private function model(): string
     {
-        return get_namespace() . 'Models\\' . $this->name($request);
+        return get_namespace() . 'Models\\' . $this->name;
     }
 
     /**
@@ -133,8 +172,12 @@ class Controller
      */
     private function query(Request $request): Builder
     {
-        $model = $this->model($request);
+        $model = $this->model;
         $query = $model::query();
+
+        if ($request->method() !== 'GET') {
+            return $query;
+        }
 
         $params = $request->toArray();
 
@@ -165,16 +208,12 @@ class Controller
     /**
      * Show record.
      * @param Request $request
-     * @param int $id
+     * @param Model $model
      * @return mixed
      */
-    public function show(Request $request, int $id): mixed
+    public function show(Request $request, Model $model): mixed
     {
-        $query = $this->query($request);
-        $query->where('id', $id);
-
-
-        return $this->responseShow($request, $query->firstOrFail());
+        return $this->responseShow($request, $model);
     }
 
     /**
@@ -184,22 +223,18 @@ class Controller
      */
     public function store(Request $request): mixed
     {
-        $model = $this->model($request);
-        $model = $model::create($request->toArray());
-
+        $model = $this->model::create($request->toArray());
         return $this->responseShow($request, $model, 201);
     }
 
     /**
      * Update record.
      * @param Request $request
-     * @param int $id
+     * @param Model $model
      * @return mixed
      */
-    public function update(Request $request, int $id): mixed
+    public function update(Request $request, Model $model): mixed
     {
-        $model = $this->model($request);
-        $model = $model::findOrFail($id);
         $model->fill($request->toArray());
         $model->save();
 
@@ -207,33 +242,38 @@ class Controller
     }
 
     /**
-     * Delete record.
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
+     * Restore soft deleted record.
+     * @param Model $model
+     * @return mixed
      */
-    public function destroy(Request $request, int $id): JsonResponse
+    public function restore(Model $model): JsonResponse
     {
-        $model = $this->model($request);
-
         return response()->json([
-            'deleted' => $model::destroy($id)
+            'restored' => $model->restore()
         ]);
     }
 
     /**
-     * Delete record.
-     * @param Request $request
-     * @param int $id
+     * Soft/Delete record.
+     * @param Model $model
      * @return JsonResponse
      */
-    public function forceDestroy(Request $request, int $id): JsonResponse
+    public function destroy(Model $model): JsonResponse
     {
-        $model = $this->model($request);
-        $model = $model::withTrashed()->find($id);
-
         return response()->json([
-            'deleted' => $model ? $model->forceDelete() : false
+            'deleted' => $model->delete()
+        ]);
+    }
+
+    /**
+     * Force Delete record.
+     * @param Model $model
+     * @return JsonResponse
+     */
+    public function forceDestroy(Model $model): JsonResponse
+    {
+        return response()->json([
+            'deleted' => $model->forceDelete()
         ]);
     }
 }

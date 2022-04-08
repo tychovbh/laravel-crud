@@ -6,6 +6,8 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Tychovbh\LaravelCrud\Tests\App\Models\Page;
+use Tychovbh\LaravelCrud\Tests\App\Models\Role;
 use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
 use Tychovbh\LaravelCrud\Tests\TestCase;
@@ -19,9 +21,23 @@ class ShowTest extends TestCase
      */
     public function itCanShow()
     {
+        $page = Page::factory()->create();
+
+        $this->getJson(route('pages.show', ['page' => $page->id]))
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => $page->toArray()
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanShowWithAuth()
+    {
         $user = User::factory()->create();
 
-        $this->getJson(route('users.show', ['id' => $user->id]))
+        $this->actingAs($user)->getJson(route('users.show', ['user' => $user->id]))
             ->assertStatus(200)
             ->assertJson([
                 'data' => $user->toArray()
@@ -31,11 +47,27 @@ class ShowTest extends TestCase
     /**
      * @test
      */
+    public function itCanShowWithAuthAndId()
+    {
+        $user = User::factory()->create();
+        $role = Role::factory()->create();
+
+        $this->actingAs($user)->getJson(route('roles.show', ['id' => $role->id]))
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => $role->toArray()
+            ]);
+    }
+
+
+    /**
+     * @test
+     */
     public function itCanShowWithParams()
     {
         $user = User::factory()->create();
 
-        $this->getJson(route('users.show', ['id' => $user->id, 'verified' => 0]))
+        $this->actingAs($user)->getJson(route('users.show', ['user' => $user->id, 'verified' => 0]))
             ->assertStatus(200)
             ->assertJson([
                 'data' => $user->toArray()
@@ -51,7 +83,7 @@ class ShowTest extends TestCase
             'verified' => 1
         ]);
 
-        $this->getJson(route('users.show', ['id' => $user->id, 'verified' => 0]))
+        $this->actingAs($user)->getJson(route('users.show', ['user' => $user->id, 'verified' => 0]))
             ->assertStatus(404)
             ->assertJson([
                 'message' => (new ModelNotFoundException())->setModel(User::class)->getMessage()
@@ -65,7 +97,7 @@ class ShowTest extends TestCase
     {
         $post = Post::factory()->create();
 
-        $this->getJson(route('posts.show', ['id' => $post->id]))
+        $this->getJson(route('posts.show', ['post' => $post->id]))
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => [
@@ -82,7 +114,7 @@ class ShowTest extends TestCase
     {
         $post = Post::factory()->create();
 
-        $this->getJson(route('posts.show', ['id' => $post->id, 'resource' => 'off']))
+        $this->getJson(route('posts.show', ['post' => $post->id, 'resource' => 'off']))
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => $post->toArray()

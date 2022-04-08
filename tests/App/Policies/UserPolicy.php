@@ -12,10 +12,21 @@ class UserPolicy
 
     /**
      * It can store.
+     * @param User $authUser
      * @param User $user
      * @return bool
      */
-    public function store(User $user): bool
+    public function view(User $authUser, User $user): bool
+    {
+        return $authUser->id === $user->id;
+    }
+
+    /**
+     * It can store.
+     * @param User $user
+     * @return bool
+     */
+    public function create(User $user): bool
     {
         return true;
     }

@@ -15,16 +15,17 @@ class UserRoute implements Routes
     public static function routes()
     {
         Route::get('/users', [Controller::class, 'index'])->name('users.index');
-        Route::get('/users/{id}', [Controller::class, 'show'])->name('users.show');
-        Route::get('/users/create', [Controller::class, 'create'])->name('users.create');
+        Route::get('/users/{user}', [Controller::class, 'show'])->name('users.show')
+            ->middleware(['auth'])
+            ->can('view', [User::class, 'user']);
+
         Route::post('/users', [Controller::class, 'store'])
             ->name('users.store')
-            ->can('store', User::class)
-            ->middleware(['validate']);
-        Route::get('/users/{id}/edit', [Controller::class, 'edit'])->name('users.edit');
-        Route::put('/users/{id}', [Controller::class, 'update'])
+            ->middleware(['auth', 'validate'])
+            ->can('create', User::class);
+        Route::put('/users/{user}', [Controller::class, 'update'])
             ->name('users.update')
             ->middleware(['validate']);
-        Route::delete('/users/{id}', [Controller::class, 'destroy'])->name('users.destroy');
+        Route::delete('/users/{user}', [Controller::class, 'destroy'])->name('users.destroy');
     }
 }

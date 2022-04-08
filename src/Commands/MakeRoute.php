@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class MakeRoute extends Command
 {
-    public $signature = 'make:route {name : The name of the class}';
+    public $signature = 'make:route {name : The name of the class} {--bindings}';
 
     public $description = 'Make routes';
 
@@ -18,9 +18,13 @@ class MakeRoute extends Command
         $model = new $model();
         $file = sprintf('%s/app/Routes/%s.php', base_path(), $name);
 
+        $plural = Str::lower($model->getTable());
+        $singular = Str::singular($plural);
+
         file_replace('Route.php', [
             'Name' => $name,
-            '{models}' => Str::lower($model->getTable())
+            '{models}' => $plural,
+            '{model}' => $this->option('bindings') ? $singular : 'id'
         ], $file, __DIR__);
 
         $this->comment('All done');
