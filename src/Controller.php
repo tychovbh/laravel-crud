@@ -220,4 +220,20 @@ class Controller
             'deleted' => $model::destroy($id)
         ]);
     }
+
+    /**
+     * Delete record.
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function forceDestroy(Request $request, int $id): JsonResponse
+    {
+        $model = $this->model($request);
+        $model = $model::withTrashed()->find($id);
+
+        return response()->json([
+            'deleted' => $model ? $model->forceDelete() : false
+        ]);
+    }
 }

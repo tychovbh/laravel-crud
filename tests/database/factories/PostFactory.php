@@ -23,6 +23,7 @@ class PostFactory extends Factory
         return [
             'title' => $this->faker->name,
             'description' => $this->faker->text,
+            'deleted_at' => null
         ];
     }
 }
