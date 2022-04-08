@@ -14,8 +14,8 @@ class PageRoute implements Routes
     public static function routes()
     {
         Route::get('/pages', [Controller::class, 'index'])->name('pages.index');
-        Route::get('/pages/{id}', [Controller::class, 'show'])->name('pages.show');
+        Route::get('/pages/{model}', [Controller::class, 'show'])->name('pages.show');
         Route::post('/pages', [Controller::class, 'store'])->name('pages.store');
-        Route::put('/pages/{id}', [Controller::class, 'update'])->name('pages.update');
+        Route::put('/pages/{model}', [Controller::class, 'update'])->name('pages.update');
     }
 }

@@ -21,7 +21,22 @@ class ShowTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->getJson(route('users.show', ['id' => $user->id]))
+        $this->getJson(route('users.show', ['model' => $user->id]))
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => $user->toArray()
+            ]);
+    }
+
+
+    /**
+     * @test
+     */
+    public function itCanShowWithAuth()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->getJson(route('users.show', ['model' => $user->id]))
             ->assertStatus(200)
             ->assertJson([
                 'data' => $user->toArray()
@@ -35,7 +50,7 @@ class ShowTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->getJson(route('users.show', ['id' => $user->id, 'verified' => 0]))
+        $this->getJson(route('users.show', ['model' => $user->id, 'verified' => 0]))
             ->assertStatus(200)
             ->assertJson([
                 'data' => $user->toArray()
@@ -51,7 +66,7 @@ class ShowTest extends TestCase
             'verified' => 1
         ]);
 
-        $this->getJson(route('users.show', ['id' => $user->id, 'verified' => 0]))
+        $this->getJson(route('users.show', ['model' => $user->id, 'verified' => 0]))
             ->assertStatus(404)
             ->assertJson([
                 'message' => (new ModelNotFoundException())->setModel(User::class)->getMessage()
@@ -65,7 +80,7 @@ class ShowTest extends TestCase
     {
         $post = Post::factory()->create();
 
-        $this->getJson(route('posts.show', ['id' => $post->id]))
+        $this->getJson(route('posts.show', ['model' => $post->id]))
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => [
@@ -82,7 +97,7 @@ class ShowTest extends TestCase
     {
         $post = Post::factory()->create();
 
-        $this->getJson(route('posts.show', ['id' => $post->id, 'resource' => 'off']))
+        $this->getJson(route('posts.show', ['model' => $post->id, 'resource' => 'off']))
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => $post->toArray()

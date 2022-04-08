@@ -2,16 +2,31 @@
 
 namespace Tychovbh\LaravelCrud;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+
+/**
+ * @property string model
+ * @property string name
+ */
 class Controller
 {
+    /**
+     * Controller constructor.
+     */
+    public function __construct()
+    {
+        $this->name = $this->name(request());
+        $this->model = $this->model();
+        app()->bind(Model::class, $this->model);
+    }
+
     /**
      * The request name.
      * @param Request $request
@@ -78,9 +93,9 @@ class Controller
             return is_subclass_of($class, ResourceCollection::class) ? new $class($data) : $class::collection($data);
         }
 
-        $class .= $this->name($request);
+        $class .= $this->name;
 
-        $collection = $class . 'Collection';
+        $collection = $class . $this->name .  'Collection';
         if (class_exists($collection)) {
             $data = $paginate ? $query->paginate($paginate) : $query->get();
             return new $collection($data);
@@ -106,7 +121,7 @@ class Controller
     private function responseShow(Request $request, Model $model, int $status = 200): mixed
     {
         $class = get_namespace() . 'Http\\Resources\\';
-        $class .= $request->get('resource') ?? $this->name($request) . 'Resource';
+        $class .= $request->get('resource') ?? $this->name . 'Resource';
 
         if ($request->get('resource') === 'off' || !class_exists($class)) {
             return response()->json([
@@ -119,12 +134,11 @@ class Controller
 
     /**
      * Retrieve model.
-     * @param Request $request
      * @return string
      */
-    private function model(Request $request): string
+    private function model(): string
     {
-        return get_namespace() . 'Models\\' . $this->name($request);
+        return get_namespace() . 'Models\\' . $this->name;
     }
 
     /**
@@ -133,7 +147,7 @@ class Controller
      */
     private function query(Request $request): Builder
     {
-        $model = $this->model($request);
+        $model = $this->model;
         $query = $model::query();
 
         $params = $request->toArray();
@@ -165,16 +179,12 @@ class Controller
     /**
      * Show record.
      * @param Request $request
-     * @param int $id
+     * @param Model $model
      * @return mixed
      */
-    public function show(Request $request, int $id): mixed
+    public function show(Request $request, Model $model): mixed
     {
-        $query = $this->query($request);
-        $query->where('id', $id);
-
-
-        return $this->responseShow($request, $query->firstOrFail());
+        return $this->responseShow($request, $model);
     }
 
     /**
@@ -184,22 +194,18 @@ class Controller
      */
     public function store(Request $request): mixed
     {
-        $model = $this->model($request);
-        $model = $model::create($request->toArray());
-
+        $model = $this->model::create($request->toArray());
         return $this->responseShow($request, $model, 201);
     }
 
     /**
      * Update record.
      * @param Request $request
-     * @param int $id
+     * @param Model $model
      * @return mixed
      */
-    public function update(Request $request, int $id): mixed
+    public function update(Request $request, Model $model): mixed
     {
-        $model = $this->model($request);
-        $model = $model::findOrFail($id);
         $model->fill($request->toArray());
         $model->save();
 
@@ -208,16 +214,13 @@ class Controller
 
     /**
      * Delete record.
-     * @param Request $request
-     * @param int $id
+     * @param Model $model
      * @return JsonResponse
      */
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(Model $model): JsonResponse
     {
-        $model = $this->model($request);
-
         return response()->json([
-            'deleted' => $model::destroy($id)
+            'deleted' => $model->delete()
         ]);
     }
 }
