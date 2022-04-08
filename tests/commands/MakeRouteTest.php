@@ -15,4 +15,13 @@ class MakeRouteTest extends TestCase
         $this->artisan('make:route UserRoute')
         ->assertSuccessful();
     }
+
+    /**
+     * @test
+     */
+    public function itCanCreateRouteWithBindings()
+    {
+        $this->artisan('make:route UserRoute --bindings')
+            ->assertSuccessful();
+    }
 }

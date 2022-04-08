@@ -13,12 +13,12 @@ class UserPolicy
     /**
      * It can store.
      * @param User $authUser
-     * @param User $model
+     * @param User $user
      * @return bool
      */
-    public function view(User $authUser, User $model): bool
+    public function view(User $authUser, User $user): bool
     {
-        return $authUser->id === $model->id;
+        return $authUser->id === $user->id;
     }
 
     /**

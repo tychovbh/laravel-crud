@@ -8,12 +8,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Tychovbh\LaravelCrud\Tests\App\Models\User;
 
 
 /**
  * @property string model
  * @property string name
+ * @property string method
  */
 class Controller
 {
@@ -24,7 +27,29 @@ class Controller
     {
         $this->name = $this->name(request());
         $this->model = $this->model();
+        $this->method = $this->method(request());
+
         app()->bind(Model::class, $this->model);
+
+        Route::bind(Str::lower($this->name), fn(int $id) => $this->findModel($id));
+        Route::bind('id', fn(int $id) => $this->findModel($id));
+    }
+
+    /**
+     * Find model.
+     * @param int $id
+     * @return Model
+     */
+    private function findModel(int $id): Model
+    {
+        $query = $this->query(request());
+        $query->where('id', $id);
+
+        if (in_array($this->method, ['forceDestroy', 'restore'])) {
+            $query->onlyTrashed();
+        }
+
+        return $query->firstOrFail();
     }
 
     /**
@@ -95,7 +120,7 @@ class Controller
 
         $class .= $this->name;
 
-        $collection = $class . $this->name .  'Collection';
+        $collection = $class . $this->name . 'Collection';
         if (class_exists($collection)) {
             $data = $paginate ? $query->paginate($paginate) : $query->get();
             return new $collection($data);
@@ -149,6 +174,10 @@ class Controller
     {
         $model = $this->model;
         $query = $model::query();
+
+        if ($request->method() !== 'GET') {
+            return $query;
+        }
 
         $params = $request->toArray();
 
@@ -213,7 +242,19 @@ class Controller
     }
 
     /**
-     * Delete record.
+     * Restore soft deleted record.
+     * @param Model $model
+     * @return mixed
+     */
+    public function restore(Model $model): JsonResponse
+    {
+        return response()->json([
+            'restored' => $model->restore()
+        ]);
+    }
+
+    /**
+     * Soft/Delete record.
      * @param Model $model
      * @return JsonResponse
      */
@@ -232,7 +273,7 @@ class Controller
     public function forceDestroy(Model $model): JsonResponse
     {
         return response()->json([
-            'deleted' => $model ? $model->forceDelete() : false
+            'deleted' => $model->forceDelete()
         ]);
     }
 }
