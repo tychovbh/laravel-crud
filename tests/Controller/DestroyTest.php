@@ -63,6 +63,6 @@ class DestroyTest extends TestCase
                 'deleted' => true
             ]);
 
-        $this->assertDatabaseMissing('posts', ['model' => $post->id]);
+        $this->assertDatabaseMissing('posts', ['id' => $post->id]);
     }
 }
