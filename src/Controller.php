@@ -46,7 +46,7 @@ class Controller
         $query->where('id', $id);
 
         if (in_array($this->method, ['forceDestroy', 'restore'])) {
-            $query->onlyTrashed();
+            $query->withTrashed();
         }
 
         return $query->firstOrFail();

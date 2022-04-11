@@ -53,6 +53,22 @@ class DestroyTest extends TestCase
     public function itCanForceDestroy()
     {
         $post = Post::factory()->create();
+
+        $this->deleteJson(route('posts.forceDestroy', ['post' => $post->id]))
+            ->assertStatus(200)
+            ->assertJson([
+                'deleted' => true
+            ]);
+
+        $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanForceDestroySoftDeleted()
+    {
+        $post = Post::factory()->create();
         $post->delete();
 
         $this->deleteJson(route('posts.forceDestroy', ['post' => $post->id]))
