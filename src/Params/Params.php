@@ -78,7 +78,7 @@ abstract class Params
      * Filter users on till created_at
      * @param string $to
      */
-    public function indexToParam(string $to)
+    public function to(string $to)
     {
         $this->query->where($this->table . '.' . $this->between, '<=', $to);
     }
