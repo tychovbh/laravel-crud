@@ -5,6 +5,7 @@ namespace Tychovbh\LaravelCrud\Contracts;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Tychovbh\LaravelCrud\Params\DefaultParams;
 
 /**
  * Trait HasParams
@@ -22,6 +23,7 @@ trait GetParams
     {
         $model = new self();
         $query = self::query();
+        $defaultParams = new DefaultParams($model->getTable(), $query, $params);
         $customParams = self::customParams($model, $query, $params);
 
         foreach ($params as $param => $value) {
@@ -30,7 +32,12 @@ trait GetParams
                 continue;
             }
 
-            if (!in_array($param, $model->params)) {
+            if (method_exists($defaultParams, $param)) {
+                $defaultParams->{$param}($value);
+                continue;
+            }
+
+            if (!property_exists($model, 'params') || !in_array($param, $model->params)) {
                 continue;
             }
 

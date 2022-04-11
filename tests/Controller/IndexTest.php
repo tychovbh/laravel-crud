@@ -70,7 +70,30 @@ class IndexTest extends TestCase
     /**
      * @test
      */
-    public function itCanIndexWithParams()
+    public function itCanIndexWithDefaultParams()
+    {
+        $from = now()->subDays(2);
+        $posts = Post::factory()->count(2)->create([
+            'created_at' => $from
+        ]);
+
+        Post::factory()->count(2)->create([
+            'created_at' => now()->subDays(4)
+        ]);
+
+        $this->getJson(route('posts.index', ['from' => $from->format('Y-m-d'), 'resource' => 'off']))
+            ->assertStatus(200)
+            ->assertJsonCount(2, 'data')
+            ->assertJson([
+                'data' => $posts->toArray()
+            ]);
+    }
+
+
+    /**
+     * @test
+     */
+    public function itCanIndexWithDatabaseColumnsAsParams()
     {
         $user = User::factory()->create();
         User::factory()->count(4)->create();
