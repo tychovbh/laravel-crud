@@ -120,7 +120,7 @@ class Controller
 
         $class .= $this->name;
 
-        $collection = $class . $this->name . 'Collection';
+        $collection = $class . 'Collection';
         if (class_exists($collection)) {
             $data = $paginate ? $query->paginate($paginate) : $query->get();
             return new $collection($data);
