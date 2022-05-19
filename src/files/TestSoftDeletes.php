@@ -122,4 +122,24 @@ class NameTest extends TestCase
 
         $this->assertDatabaseMissing('plural', ['id' => $singular->id]);
     }
+
+    /**
+     * @test
+     */
+    public function itCanRestoreDestroyed()
+    {
+        $singular = Name::factory()->create();
+        $singular->delete();
+
+        $this->putJson(route('plural.restore', ['singular' => $singular->id]))
+            ->assertStatus(200)
+            ->assertJson([
+                'restored' => true
+            ]);
+
+        $this->assertDatabaseHas('plural', [
+            'id' => $singular->id,
+            'deleted_at' => null
+        ]);
+    }
 }
