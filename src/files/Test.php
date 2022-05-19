@@ -18,7 +18,7 @@ class NameTest extends TestCase
         $plural = Name::factory()->count(3)->create();
 
         $this->getJson(route('plural.index'))
-            ->asserStatus(200)
+            ->assertStatus(200)
             ->assertJsonCount($plural->count(), 'data')
             ->assertJson([
                 'data' => $plural->map->only('id')->toArray()
