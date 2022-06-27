@@ -33,7 +33,7 @@ class NameTest extends TestCase
         $singular = Name::factory()->create();
 
         $this->getJson(route('plural.show', [
-            'singular' => $singular->id,
+            '{model}' => $singular->id,
         ]))
             ->assertStatus(200)
             ->assertJson([
@@ -72,7 +72,7 @@ class NameTest extends TestCase
         $singular = Name::factory()->create();
         $update = Name::factory()->make();
 
-        $this->putJson(route('plural.update', ['singular' => $singular->id]), $update->toArray())
+        $this->putJson(route('plural.update', ['{model}' => $singular->id]), $update->toArray())
             ->assertStatus(200)
             ->assertJson([
                 'data' => [
@@ -94,7 +94,7 @@ class NameTest extends TestCase
     {
         $singular = Name::factory()->create();
 
-        $this->deleteJson(route('plural.destroy', ['singular' => $singular->id]))
+        $this->deleteJson(route('plural.destroy', ['{model}' => $singular->id]))
             ->assertStatus(200)
             ->assertJson([
                 'deleted' => true
@@ -113,7 +113,7 @@ class NameTest extends TestCase
     {
         $singular = Name::factory()->create();
 
-        $this->deleteJson(route('plural.forceDestroy', ['singular' => $singular->id]))
+        $this->deleteJson(route('plural.forceDestroy', ['{model}' => $singular->id]))
             ->assertStatus(200)
             ->assertJson([
                 'deleted' => true
@@ -130,7 +130,7 @@ class NameTest extends TestCase
         $singular = Name::factory()->create();
         $singular->delete();
 
-        $this->putJson(route('plural.restore', ['singular' => $singular->id]))
+        $this->putJson(route('plural.restore', ['{model}' => $singular->id]))
             ->assertStatus(200)
             ->assertJson([
                 'restored' => true

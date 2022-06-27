@@ -13,6 +13,9 @@ class MakeRoute extends Command
 
     public function handle(): int
     {
+        // TODO ask support bindings
+        // TODO ask for auth:sanctum
+        // TODO ask for can middleware
         $name = $this->argument('name');
         $model = get_namespace(). 'Models\\' . Str::replace('Route', '', $name);
         $model = new $model();
@@ -21,10 +24,12 @@ class MakeRoute extends Command
         $plural = Str::lower($model->getTable());
         $singular = Str::singular($plural);
 
+        $bindings = $this->option('bindings') ?? $this->confirm('Support bindings?');
+
         file_replace('Route.php', [
             'Name' => $name,
             '{models}' => $plural,
-            '{model}' => $this->option('bindings') ? $singular : 'id'
+            '{model}' => $bindings ? $singular : 'id'
         ], $file, __DIR__);
 
         $this->comment('All done');

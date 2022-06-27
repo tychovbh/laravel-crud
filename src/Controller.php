@@ -25,6 +25,7 @@ class Controller
      */
     public function __construct()
     {
+        // TODO run not in !app()->runningInConsole() but yes in testing mode
         $this->name = $this->name(request());
         $this->model = $this->model();
         $this->method = $this->method(request());
@@ -60,7 +61,11 @@ class Controller
     private function name(Request $request): string
     {
         $name = $request->route()->getName();
-        return Str::ucfirst(Str::singular(explode('.', $name)[0]));
+        return Str::ucfirst(
+            Str::camel(
+                Str::singular(explode('.', $name)[0])
+            )
+        );
     }
 
     /**
