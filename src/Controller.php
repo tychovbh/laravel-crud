@@ -110,6 +110,9 @@ class Controller
      */
     private function responseIndex(Request $request, Builder $query): mixed
     {
+        $table = (new $this->model)->getTable();
+        $query->select([$table . '.*']);
+
         if ($request->get('resource') === 'off') {
             return $this->responseJson($request, $query);
         }
