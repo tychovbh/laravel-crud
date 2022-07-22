@@ -37,6 +37,10 @@ trait GetParams
                 continue;
             }
 
+            if (!property_exists($model, 'params')) {
+                continue;
+            }
+
             if (!property_exists($model, 'params') || !in_array($param, $model->params)) {
                 continue;
             }
