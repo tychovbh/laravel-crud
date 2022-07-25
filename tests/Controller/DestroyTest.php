@@ -88,10 +88,13 @@ class DestroyTest extends TestCase
         $post = Post::factory()->create();
         $post->delete();
 
-        $this->putJson(route('posts.restore', ['post' => $post->id]))
+        $this->putJson(route('posts.restore', ['post' => $post->id, 'resource' => 'off']))
             ->assertStatus(200)
             ->assertJson([
-                'restored' => true
+                'data' => [
+                    'id' => $post->id,
+                    'deleted_at' => null
+                ]
             ]);
 
         $this->assertDatabaseHas('posts', [

@@ -250,14 +250,14 @@ class Controller
 
     /**
      * Restore soft deleted record.
+     * @param Request $request
      * @param Model $model
      * @return mixed
      */
-    public function restore(Model $model): JsonResponse
+    public function restore(Request $request, Model $model): mixed
     {
-        return response()->json([
-            'restored' => $model->restore()
-        ]);
+        $model->restore();
+        return $this->responseShow($request, $model);
     }
 
     /**
