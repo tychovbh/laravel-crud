@@ -16,6 +16,7 @@ class PostResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'title_short' => Str::limit($this->title, 3)
         ];

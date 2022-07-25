@@ -44,6 +44,7 @@ class UpdateTest extends TestCase
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => [
+                    'id' => 1,
                     'title' => $update->title,
                     'title_short' => Str::limit($update->title, 3),
                 ]

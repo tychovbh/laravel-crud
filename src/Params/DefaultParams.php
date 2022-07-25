@@ -82,4 +82,26 @@ class DefaultParams
     {
         $this->query->where($this->table . '.' . $this->between, '<=', $to);
     }
+
+    /**
+     * Filter only trashed.
+     * @param bool $trashed
+     */
+    public function only_trashed(bool $trashed)
+    {
+        if ($trashed) {
+            $this->query->onlyTrashed();
+        }
+    }
+
+    /**
+     * Filter with trashed (all).
+     * @param bool $trashed
+     */
+    public function with_trashed(bool $trashed)
+    {
+        if ($trashed) {
+            $this->query->withTrashed();
+        }
+    }
 }

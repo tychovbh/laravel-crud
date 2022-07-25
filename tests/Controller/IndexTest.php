@@ -128,7 +128,7 @@ class IndexTest extends TestCase
     /**
      * @test
      */
-    public function itCanIndexWithFields()
+    public function itCanIndexWithSelect()
     {
         $users = User::factory()->count(4)->create();
 
@@ -136,7 +136,7 @@ class IndexTest extends TestCase
         $this->getJson(route('users.index', ['select' => 'name,email']))
             ->assertStatus(200)
             ->assertExactJson([
-                'data' => $users->map(fn(User $user) => $user->only('email', 'name'))
+                'data' => $users->map(fn(User $user) => $user->only('email', 'name'))->toArray()
             ]);
 
 
@@ -144,21 +144,22 @@ class IndexTest extends TestCase
         $this->getJson(route('users.index', ['select' => ['email', 'name']]))
             ->assertStatus(200)
             ->assertExactJson([
-                'data' => $users->map(fn(User $user) => $user->only('email', 'name'))
+                'data' => $users->map(fn(User $user) => $user->only('email', 'name'))->toArray()
             ]);
     }
 
     /**
      * @test
      */
-    public function itCanIndexWithFieldsAndResource()
+    public function itCanIndexWithSelectAndResource()
     {
         $posts = Post::factory()->count(4)->create();
 
-        $this->getJson(route('posts.index', ['select' => 'title']))
+        $this->getJson(route('posts.index', ['select' => 'id,title']))
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => $posts->map(fn(Post $post) => [
+                    'id' => $post->id,
                     'title' => $post->title,
                     'title_short' => Str::limit($post->title, 3)
                 ])
@@ -210,6 +211,43 @@ class IndexTest extends TestCase
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => $posts->toArray(),
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanIndexOnlyTrashed()
+    {
+        Post::factory()->count(2)->create();
+        $trash = Post::factory()->create();
+        $trash->delete();
+
+        $this->getJson(route('posts.index', ['only_trashed' => true]))
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJson([
+                'data' => [
+                    ['id' => $trash->id],
+                ],
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanIndexWithTrashed()
+    {
+        $posts = Post::factory()->count(2)->create();
+        $trash = Post::factory()->create();
+        $trash->delete();
+
+        $posts = $posts->push($trash);
+        $this->getJson(route('posts.index', ['with_trashed' => true]))
+            ->assertStatus(200)
+            ->assertJsonCount($posts->count(), 'data')
+            ->assertJson([
+                'data' => $posts->map(fn(Post $post) => $post->only('id'))->toArray(),
             ]);
     }
 }

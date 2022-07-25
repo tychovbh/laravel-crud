@@ -58,6 +58,7 @@ class StoreTest extends TestCase
             ->assertStatus(201)
             ->assertExactJson([
                 'data' => [
+                    'id' => 1,
                     'title' => $post->title,
                     'title_short' => Str::limit($post->title, 3),
                 ]

@@ -101,6 +101,7 @@ class ShowTest extends TestCase
             ->assertStatus(200)
             ->assertExactJson([
                 'data' => [
+                    'id' => $post->id,
                     'title' => $post->title,
                     'title_short' => Str::limit($post->title, 3),
                 ]

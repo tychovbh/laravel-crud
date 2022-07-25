@@ -110,9 +110,6 @@ class Controller
      */
     private function responseIndex(Request $request, Builder $query): mixed
     {
-        $table = (new $this->model)->getTable();
-        $query->select([$table . '.*']);
-
         if ($request->get('resource') === 'off') {
             return $this->responseJson($request, $query);
         }
@@ -193,11 +190,13 @@ class Controller
             $query = $model::params($params);
         }
 
-        $select = $request->get('select') ?? ['*'];
+        $select = $request->get('select', ['*']);
 
         if (is_string($select)) {
             $select = explode(',', $select);
         }
+
+        $select = array_map(fn($field) => $query->from . '.' . $field, $select);
 
         return $query->select($select);
     }
