@@ -213,6 +213,23 @@ class Controller
     }
 
     /**
+     * Count records.
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function count(Request $request): JsonResponse
+    {
+        $query = $this->query($request);
+        $results = $query->paginate(1);
+
+        return response()->json([
+            'data' => [
+                'count' => $results->total()
+            ]
+        ]);
+    }
+
+    /**
      * Show record.
      * @param Request $request
      * @param Model $model

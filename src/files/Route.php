@@ -14,6 +14,7 @@ class Name implements Routes
     public static function routes()
     {
         Route::get('/{models}', [Controller::class, 'index'])->name('{models}.index');
+        Route::get('/{models}/count', [Controller::class, 'count'])->name('{models}.count');
         Route::get('/{models}/{{model}}', [Controller::class, 'show'])->name('{models}.show');
         Route::post('/{models}', [Controller::class, 'store'])->name('{models}.store');
         Route::put('/{models}/{{model}}', [Controller::class, 'update'])->name('{models}.update');

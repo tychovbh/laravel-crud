@@ -28,6 +28,22 @@ class NameTest extends TestCase
     /**
      * @test
      */
+    public function itCanCount()
+    {
+        $plural = Name::factory()->count(3)->create();
+
+        $this->getJson(route('plural.count'))
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'count' => $plural->count()
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     */
     public function itCanShow()
     {
         $singular = Name::factory()->create();

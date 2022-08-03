@@ -15,6 +15,7 @@ class UserRoute implements Routes
     public static function routes()
     {
         Route::get('/users', [Controller::class, 'index'])->name('users.index');
+        Route::get('/users/count', [Controller::class, 'count'])->name('users.count');
         Route::get('/users/{user}', [Controller::class, 'show'])->name('users.show')
             ->middleware(['auth'])
             ->can('view', [User::class, 'user']);
