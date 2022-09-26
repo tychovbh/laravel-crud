@@ -55,6 +55,10 @@ trait GetParams
             is_array($value) ? $query->whereIn($key, $value) : $query->where($key, $value);
         }
 
+        if (!$model->disableGroupBy) {
+            $query->groupBy($query->getModel()->getTable() . '.id');
+        }
+
         return $query;
     }
 
