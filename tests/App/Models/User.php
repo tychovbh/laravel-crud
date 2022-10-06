@@ -5,12 +5,13 @@ namespace Tychovbh\LaravelCrud\Tests\App\Models;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tychovbh\LaravelCrud\Contracts\CacheClear;
 use Tychovbh\LaravelCrud\Tests\Database\Factories\UserFactory;
 use Tychovbh\LaravelCrud\Contracts\GetParams;
 
 class User extends Authenticatable
 {
-    use HasFactory, GetParams;
+    use HasFactory, GetParams, CacheClear;
 
     /**
      * @var array

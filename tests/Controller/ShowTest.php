@@ -5,6 +5,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Tychovbh\LaravelCrud\Tests\App\Models\Page;
 use Tychovbh\LaravelCrud\Tests\App\Models\Role;
@@ -37,12 +38,37 @@ class ShowTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)->getJson(route('users.show', ['user' => $user->id]))
+        $route = route('users.show', ['user' => $user->id]);
+        $this->actingAs($user)->getJson($route)
             ->assertStatus(200)
             ->assertJson([
                 'data' => $user->toArray()
             ]);
     }
+
+    /**
+     * @test
+     */
+    public function itCanShowWithCache()
+    {
+        $user = User::factory()->create();
+
+        $expected = [
+            'data' => $user->toArray()
+        ];
+
+        $this->actingAs($user)->getJson(route('users.show', ['user' => $user->id]))
+            ->assertStatus(200)
+            ->assertJson($expected);
+
+        $response = Cache::tags([
+            'users.show',
+            'users.show.' . $user->id,
+        ])->get('/users/' . $user->id);
+
+        $this->assertEquals($expected['data']['id'], $response['data']['id']);
+    }
+
 
     /**
      * @test

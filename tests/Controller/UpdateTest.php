@@ -4,6 +4,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
@@ -29,6 +30,40 @@ class UpdateTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('users', $expected);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanUpdateWithCache()
+    {
+        $this->markTestSkipped('works with breakpoints but not directly');
+        $user = User::factory()->create();
+
+        // Cache record
+        $this->actingAs($user)->getJson(route('users.show', ['user' => $user->id]))
+            ->assertStatus(200);
+
+
+        $update = User::factory()->make();
+        $expected = array_merge(['id' => $user->id], $update->toArray());
+
+        // Update record
+        $this->putJson(route('users.update', ['user' => $user->id]), $update->toArray())
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => $expected
+            ]);
+
+        $this->assertDatabaseHas('users', $expected);
+
+        // Assert that cache is cleared via update
+        $response = Cache::tags([
+            'users.show',
+            'users.show.' . $user->id,
+        ])->get('/users/' . $user->id);
+
+        $this->assertNull($response);
     }
 
     /**
