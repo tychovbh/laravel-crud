@@ -86,8 +86,9 @@ class Cache
         $cache_tags = $request->cache_tags;
 
         // TODO what about more params?
-        foreach ($request->route()->parameters() as $param) {
-            $id = is_object($param) ? $param->id: $param;
+        foreach ($request->route()->parameterNames() as $name) {
+            $value = $request->route($name);
+            $id = is_object($value) ? $value->id: $value;
             $tags[] = sprintf('%s.%s', $route_name, $id);
         }
 
