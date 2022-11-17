@@ -8,9 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Tychovbh\LaravelCrud\Tests\App\Models\User;
+use Tychovbh\LaravelCrud\Actions\ModelNamespace;
+use Tychovbh\LaravelCrud\Actions\ModelName;
+use Tychovbh\LaravelCrud\Actions\ModelQuery;
 
 
 /**
@@ -26,57 +26,10 @@ class Controller
     public function __construct()
     {
         // TODO run not in !app()->runningInConsole() but yes in testing mode
-        $this->name = $this->name(request());
-        $this->model = $this->model();
-        $this->method = $this->method(request());
+        $this->name = (new ModelName())->get(request());
+        $this->model = (new ModelNamespace($this->name))->get();
 
         app()->bind(Model::class, $this->model);
-
-        Route::bind(Str::lower($this->name), fn(int $id) => $this->findModel($id));
-        Route::bind('id', fn(int $id) => $this->findModel($id));
-    }
-
-    /**
-     * Find model.
-     * @param int $id
-     * @return Model
-     */
-    private function findModel(int $id): Model
-    {
-        $query = $this->query(request());
-        $query->where('id', $id);
-
-        if (in_array($this->method, ['forceDestroy', 'restore'])) {
-            $query->withTrashed();
-        }
-
-        return $query->firstOrFail();
-    }
-
-    /**
-     * The request name.
-     * @param Request $request
-     * @return string
-     */
-    private function name(Request $request): string
-    {
-        $name = $request->route()->getName();
-        return Str::ucfirst(
-            Str::camel(
-                Str::singular(explode('.', $name)[0])
-            )
-        );
-    }
-
-    /**
-     * The request method.
-     * @param Request $request
-     * @return string
-     */
-    private function method(Request $request): string
-    {
-        $name = $request->route()->getName();
-        return explode('.', $name)[1];
     }
 
     /**
@@ -163,52 +116,13 @@ class Controller
     }
 
     /**
-     * Retrieve model.
-     * @return string
-     */
-    private function model(): string
-    {
-        return get_namespace() . 'Models\\' . $this->name;
-    }
-
-    /**
-     * Start request query.
-     * @param Request $request
-     */
-    private function query(Request $request): Builder
-    {
-        $model = $this->model;
-        $query = $model::query();
-
-        if ($request->method() !== 'GET') {
-            return $query;
-        }
-
-        $params = $request->toArray();
-
-        if ($params && method_exists($model, 'params')) {
-            $query = $model::params($params);
-        }
-
-        $select = $request->get('select', ['*']);
-
-        if (is_string($select)) {
-            $select = explode(',', $select);
-        }
-
-        $select = array_map(fn($field) => $query->from . '.' . $field, $select);
-
-        return $query->select($select);
-    }
-
-    /**
      * Index records.
      * @param Request $request
      * @return mixed
      */
     public function index(Request $request): mixed
     {
-        $query = $this->query($request);
+        $query = (new ModelQuery($this->model))->start($request);
         return $this->responseIndex($request, $query);
     }
 
@@ -219,7 +133,7 @@ class Controller
      */
     public function count(Request $request): JsonResponse
     {
-        $query = $this->query($request);
+        $query = (new ModelQuery($this->model))->start($request);
         $results = $query->paginate(1);
 
         return response()->json([

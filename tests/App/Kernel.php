@@ -6,6 +6,7 @@ use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Tychovbh\LaravelCrud\Middleware\Authorize;
 use Tychovbh\LaravelCrud\Middleware\Cache;
+use Tychovbh\LaravelCrud\Middleware\CrudBindings;
 use Tychovbh\LaravelCrud\Middleware\Validate;
 
 class Kernel extends HttpKernel
@@ -18,6 +19,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
+        'crud-bindings' => CrudBindings::class,
         'cache' => Cache::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'validate' => Validate::class,

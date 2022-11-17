@@ -32,7 +32,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        Route::middleware('bindings')->group(function () {
+        Route::middleware(['crud-bindings', 'bindings'])->group(function () {
             UserRoute::routes();
             PostRoute::routes();
             PageRoute::routes();
