@@ -37,6 +37,7 @@ class LaravelCrudServiceProvider extends PackageServiceProvider
         /** @var Router $router */
         $router = $this->app['router'];
         $router->prependMiddlewareToGroup('api', CrudBindings::class);
-        $router->prependMiddlewareToGroup('web', CrudBindings::class);
+        // TODO check if this is needed
+//        $router->prependMiddlewareToGroup('web', CrudBindings::class);
     }
 }
