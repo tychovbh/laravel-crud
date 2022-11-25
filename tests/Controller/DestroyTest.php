@@ -111,7 +111,9 @@ class DestroyTest extends TestCase
     {
         $posts = Post::factory(3)->create();
 
-        $this->deleteJson(route('posts.bulkDestroy', ['id' => [$posts[0]->id, $posts[1]->id, $posts[2]->id]]))
+        $this->deleteJson(route('posts.bulkDestroy', [
+            'id' => $posts->pluck('id')->toArray()
+        ]))
             ->assertStatus(200)
             ->assertJson([
                 'deleted' => true
@@ -130,11 +132,13 @@ class DestroyTest extends TestCase
      */
     public function itCanBulkRestore()
     {
-        $posts = Post::factory(3)->create();
+        Post::factory()->create();
+        $posts = Post::factory(2)->create();
+        $ids = $posts->pluck('id')->toArray();
 
-        Post::bulkDestroy([1,3]);
+        Post::bulkDestroy($ids);
 
-        $this->postJson(route('posts.bulkRestore'), ['id' => [$posts[0]->id, $posts[2]->id]])
+        $this->postJson(route('posts.bulkRestore'), ['id' => $ids])
             ->assertStatus(200);
 
         foreach ($posts as $post) {
@@ -150,9 +154,11 @@ class DestroyTest extends TestCase
      */
     public function itCanBulkForceDestroy()
     {
-        $posts = Post::factory(3)->create();
+        Post::factory()->create();
+        $posts = Post::factory(2)->create();
+        $ids = $posts->pluck('id')->toArray();
 
-        $this->deleteJson(route('posts.bulkForceDestroy', ['id' => [$posts[0]->id, $posts[2]->id]]))
+        $this->deleteJson(route('posts.bulkForceDestroy', ['id' => $ids]))
 
             ->assertStatus(200)
             ->assertJson([
