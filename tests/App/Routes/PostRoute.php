@@ -16,8 +16,11 @@ class PostRoute implements Routes
         Route::get('/posts', [Controller::class, 'index'])->name('posts.index');
         Route::get('/posts/{post}', [Controller::class, 'show'])->name('posts.show');
         Route::post('/posts', [Controller::class, 'store'])->name('posts.store');
+        Route::post('/posts/bulkRestore', [Controller::class, 'bulkRestore'])->name('posts.bulkRestore');
         Route::put('/posts/{post}', [Controller::class, 'update'])->name('posts.update');
         Route::put('/posts/{post}/restore', [Controller::class, 'restore'])->name('posts.restore');
+        Route::delete('/posts/bulkDestroy', [Controller::class, 'bulkDestroy'])->name('posts.bulkDestroy');
+        Route::delete('/posts/bulkForceDestroy', [Controller::class, 'bulkForceDestroy'])->name('posts.bulkForceDestroy');
         Route::delete('/posts/{post}', [Controller::class, 'destroy'])->name('posts.destroy');
         Route::delete('/posts/{post}/force', [Controller::class, 'forceDestroy'])->name('posts.forceDestroy');
     }
