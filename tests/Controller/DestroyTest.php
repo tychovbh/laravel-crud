@@ -109,18 +109,20 @@ class DestroyTest extends TestCase
      */
     public function itCanBulkSoftDestroy()
     {
-        $post = Post::factory(3)->create();
+        $posts = Post::factory(3)->create();
 
-        $this->deleteJson(route('posts.bulkDestroy', ['id' => [$post[0]->id, $post[2]->id]]))
+        $this->deleteJson(route('posts.bulkDestroy', ['id' => [$posts[0]->id, $posts[1]->id, $posts[2]->id]]))
             ->assertStatus(200)
             ->assertJson([
                 'deleted' => true
             ]);
 
-        $this->assertDatabaseHas('posts', [
-            'id' => $post[0]->id,
-            'deleted_at' => now()
-        ]);
+        foreach ($posts as $post) {
+            $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'deleted_at' => now()
+            ]);
+        }
     }
 
     /**
@@ -128,17 +130,19 @@ class DestroyTest extends TestCase
      */
     public function itCanBulkRestore()
     {
-        $post = Post::factory(3)->create();
+        $posts = Post::factory(3)->create();
 
         Post::bulkDestroy([1,3]);
 
-        $this->postJson(route('posts.bulkRestore'), ['id' => [$post[0]->id, $post[2]->id]])
+        $this->postJson(route('posts.bulkRestore'), ['id' => [$posts[0]->id, $posts[2]->id]])
             ->assertStatus(200);
 
-        $this->assertDatabaseHas('posts', [
-            'id' => $post[0]->id,
-            'deleted_at' => null
-        ]);
+        foreach ($posts as $post) {
+            $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'deleted_at' => null
+            ]);
+        }
     }
 
     /**
@@ -146,9 +150,9 @@ class DestroyTest extends TestCase
      */
     public function itCanBulkForceDestroy()
     {
-        $post = Post::factory(3)->create();
+        $posts = Post::factory(3)->create();
 
-        $this->deleteJson(route('posts.bulkForceDestroy', ['id' => [$post[0]->id, $post[2]->id]]))
+        $this->deleteJson(route('posts.bulkForceDestroy', ['id' => [$posts[0]->id, $posts[2]->id]]))
 
             ->assertStatus(200)
             ->assertJson([
