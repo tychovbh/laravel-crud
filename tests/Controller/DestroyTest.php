@@ -4,6 +4,7 @@ namespace Tychovbh\LaravelCrud\Tests\Controller;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tychovbh\LaravelCrud\Tests\App\Models\Post;
 use Tychovbh\LaravelCrud\Tests\App\Models\User;
 use Tychovbh\LaravelCrud\Tests\TestCase;
@@ -101,5 +102,69 @@ class DestroyTest extends TestCase
             'id' => $post->id,
             'deleted_at' => null
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanBulkSoftDestroy()
+    {
+        $posts = Post::factory(3)->create();
+
+        $this->deleteJson(route('posts.bulkDestroy', [
+            'id' => $posts->pluck('id')->toArray()
+        ]))
+            ->assertStatus(200)
+            ->assertJson([
+                'deleted' => true
+            ]);
+
+        foreach ($posts as $post) {
+            $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'deleted_at' => now()
+            ]);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function itCanBulkRestore()
+    {
+        Post::factory()->create();
+        $posts = Post::factory(2)->create();
+        $ids = $posts->pluck('id')->toArray();
+
+        Post::bulkDestroy($ids);
+
+        $this->postJson(route('posts.bulkRestore'), ['id' => $ids])
+            ->assertStatus(200);
+
+        foreach ($posts as $post) {
+            $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'deleted_at' => null
+            ]);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function itCanBulkForceDestroy()
+    {
+        Post::factory()->create();
+        $posts = Post::factory(2)->create();
+        $ids = $posts->pluck('id')->toArray();
+
+        $this->deleteJson(route('posts.bulkForceDestroy', ['id' => $ids]))
+
+            ->assertStatus(200)
+            ->assertJson([
+                'deleted' => true
+            ]);
+
+        $this->assertDatabaseCount('posts', 1);
     }
 }

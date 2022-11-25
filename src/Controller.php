@@ -214,4 +214,46 @@ class Controller
             'deleted' => $model->forceDelete()
         ]);
     }
+
+    /**
+     * Bulk destroy records
+     *
+     * @return JsonResponse
+     */
+    public function bulkRestore(): JsonResponse
+    {
+        $ids = request()->input('id');
+
+        return response()->json([
+            'deleted' => $this->model::bulkRestore($ids)
+        ]);
+    }
+
+    /**
+     * Bulk destroy records
+     *
+     * @return JsonResponse
+     */
+    public function bulkDestroy(): JsonResponse
+    {
+        $ids = request()->input('id');
+
+        return response()->json([
+            'deleted' => $this->model::bulkDestroy($ids)
+        ]);
+    }
+
+    /**
+     * Bulk destroy records
+     *
+     * @return JsonResponse
+     */
+    public function bulkForceDestroy(): JsonResponse
+    {
+        $ids = request()->input('id');
+
+        return response()->json([
+            'deleted' => $this->model::bulkForceDestroy($ids)
+        ]);
+    }
 }
