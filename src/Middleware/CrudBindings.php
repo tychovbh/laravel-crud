@@ -27,10 +27,13 @@ class CrudBindings
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        $model = (new ModelName())->get($request);
 
-        Route::bind(Str::lower($model), fn(int $id) => $this->findModel($model, $id));
-        Route::bind('id', fn(int $id) => $this->findModel($model, $id));
+        $action = $request->route()->getAction();
+        if (Str::contains($action['controller'], 'Tychovbh\LaravelCrud\Controller')) {
+            $model = (new ModelName())->get($request);
+            Route::bind(Str::lower($model), fn(int $id) => $this->findModel($model, $id));
+            Route::bind('id', fn(int $id) => $this->findModel($model, $id));
+        }
 
         return $next($request);
     }

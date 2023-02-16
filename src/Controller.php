@@ -11,14 +11,14 @@ use Illuminate\Support\Arr;
 use Tychovbh\LaravelCrud\Actions\ModelNamespace;
 use Tychovbh\LaravelCrud\Actions\ModelName;
 use Tychovbh\LaravelCrud\Actions\ModelQuery;
-
+use Illuminate\Routing\Controller as BaseController;
 
 /**
  * @property string model
  * @property string name
  * @property string method
  */
-class Controller
+class Controller extends BaseController
 {
     /**
      * Controller constructor.
