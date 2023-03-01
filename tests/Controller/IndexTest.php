@@ -39,7 +39,7 @@ class IndexTest extends TestCase
         $this->getJson(route('users.v1.index'))
             ->assertStatus(200)
             ->assertExactJson([
-                'data' => $users->map(fn (User $user) => ['id' => $user->id, 'test' => 'test f'])->toArray()
+                'data' => $users->map(fn (User $user) => ['id' => $user->id, 'test' => 'test'])->toArray()
             ]);
     }
 
