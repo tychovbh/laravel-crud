@@ -28,6 +28,21 @@ class IndexTest extends TestCase
             ]);
     }
 
+
+    /**
+     * @test
+     */
+    public function itCanIndexWithRouteResource()
+    {
+        $users = User::factory()->count(4)->create();
+
+        $this->getJson(route('users.v1.index'))
+            ->assertStatus(200)
+            ->assertExactJson([
+                'data' => $users->map(fn (User $user) => ['id' => $user->id, 'test' => 'test f'])->toArray()
+            ]);
+    }
+
     /**
      * @test
      */

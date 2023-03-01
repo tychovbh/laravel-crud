@@ -63,6 +63,7 @@ class Controller extends BaseController
      */
     private function responseIndex(Request $request, Builder $query): mixed
     {
+        // TODO clean up method it is large
         if ($request->get('resource') === 'off') {
             return $this->responseJson($request, $query);
         }
@@ -70,8 +71,15 @@ class Controller extends BaseController
         $paginate = $request->get('paginate');
 
         $class = get_namespace() . 'Http\\Resources\\';
+
         if ($request->has('resource')) {
             $class .= $request->get('resource');
+            $data = $paginate ? $query->paginate($paginate) : $query->get();
+            return is_subclass_of($class, ResourceCollection::class) ? new $class($data) : $class::collection($data);
+        }
+
+        if (Arr::has($request->route()->defaults, 'resource')) {
+            $class = $request->route()->defaults['resource'];
             $data = $paginate ? $query->paginate($paginate) : $query->get();
             return is_subclass_of($class, ResourceCollection::class) ? new $class($data) : $class::collection($data);
         }
