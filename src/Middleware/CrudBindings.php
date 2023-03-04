@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Tychovbh\LaravelCrud\Actions\ModelName;
@@ -28,6 +29,11 @@ class CrudBindings
     public function handle(Request $request, Closure $next): mixed
     {
         $action = $request->route()->getAction();
+
+        if (!Arr::has($action, 'controller')) {
+            return $next($request);
+        }
+
         $controller = explode('@', $action['controller'])[0];
 
         if ($controller === Controller::class) {
