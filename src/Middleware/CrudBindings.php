@@ -44,7 +44,7 @@ class CrudBindings
         $class = new ReflectionClass($controller);
         $parent = $class->getParentClass();
 
-        if ($parent->name === Controller::class) {
+        if ($parent && $parent->name === Controller::class) {
             $this->bindModel($request);
         }
 
