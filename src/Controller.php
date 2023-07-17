@@ -14,9 +14,9 @@ use Tychovbh\LaravelCrud\Actions\ModelQuery;
 use Illuminate\Routing\Controller as BaseController;
 
 /**
- * @property string model
- * @property string name
- * @property string method
+ * @property string $model
+ * @property string $name
+ * @property string $method
  */
 class Controller extends BaseController
 {

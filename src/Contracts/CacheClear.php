@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Trait HasCache
  * @package Eyecons\LaravelTools\Contracts
- * @property int id
- * @property string table
- * @property Carbon updated_at
+ * @property int $id
+ * @property string $table
+ * @property Carbon $updated_at
  */
 trait CacheClear
 {

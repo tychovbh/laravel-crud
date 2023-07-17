@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 
 /**
  * Class Params
- * @property Builder query
+ * @property Builder $query
  * @package Tychovbh\LaravelCrud\DefaultParams
  */
 class DefaultParams
