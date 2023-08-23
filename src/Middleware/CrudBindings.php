@@ -59,7 +59,7 @@ class CrudBindings
     {
         $model = (new ModelName())->get($request);
         Route::bind(Str::lower($model), fn(int $id) => $this->findModel($model, $id));
-        Route::bind('id', fn(int $id) => $this->findModel($model, $id));
+        Route::bind('id', fn(string $id) => $this->findModel($model, $id));
     }
 
     /**
@@ -68,7 +68,7 @@ class CrudBindings
      * @param int $id
      * @return Model
      */
-    private function findModel(string $model, int $id): Model
+    private function findModel(string $model, string $id): Model
     {
         $model = (new ModelNamespace($model))->get();
         $method = (new RequestMethod())->get();
