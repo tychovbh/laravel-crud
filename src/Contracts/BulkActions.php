@@ -16,7 +16,7 @@ trait BulkActions
         foreach ($ids as $id) {
             /** @var Model $class */
             $class = self::class;
-            $class::onlyTrashed()->restore($id);
+            $class::onlyTrashed()->find($id)->restore();
         }
 
         return true;
