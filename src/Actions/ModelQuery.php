@@ -26,7 +26,8 @@ class ModelQuery
         }
 
         $params = $request->toArray();
-
+        $defaults = $request->route()->defaults;
+        $params = array_merge($params, $defaults);
         if ($params && method_exists($model, 'params')) {
             $query = $model::params($params);
         }
