@@ -133,7 +133,9 @@ class NameTest extends TestCase
         $this->putJson(route('plural.restore', ['{model}' => $singular->id]))
             ->assertStatus(200)
             ->assertJson([
-                'id' => $singular->id,
+                'data' => [
+                    'id' => $singular->id,
+                ]
             ]);
 
         $this->assertDatabaseHas('plural', [

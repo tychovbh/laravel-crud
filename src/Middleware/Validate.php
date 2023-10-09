@@ -41,7 +41,7 @@ class Validate
             '%sHttp\\Requests\\%s%sRequest',
             get_namespace(),
             Str::ucfirst($pieces[1]),
-            Str::ucfirst(Str::singular($pieces[0]))
+            Str::ucfirst(Str::singular(Str::camel($pieces[0])))
         );
         return $class::createFrom($request);
     }
