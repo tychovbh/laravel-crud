@@ -113,8 +113,8 @@ class Controller extends BaseController
     {
         $class = get_namespace() . 'Http\\Resources\\';
         $class .= $request->get('resource') ?? $this->name . 'Resource';
-
-        if (Arr::has($request->route()->defaults, 'resource')) {
+        
+        if (!$request->has('resource') && Arr::has($request->route()->defaults, 'resource')) {
             $class = $request->route()->defaults['resource'];
             return new $class($model);
         }
