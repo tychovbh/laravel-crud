@@ -73,7 +73,9 @@ class CrudBindings
         $model = (new ModelNamespace($model))->get();
         $method = (new RequestMethod())->get();
         $query = (new ModelQuery($model))->start(request());
-        $query->where($model->qualifyColumn('id'), $id);
+        
+        $emptyModel = new $model();
+        $query->where($emptyModel->qualifyColumn('id'), $id);
 
         if (in_array($method, ['forceDestroy', 'restore'])) {
             $query->withTrashed();
