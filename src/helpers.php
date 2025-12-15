@@ -10,7 +10,7 @@ if (!function_exists('file_replace')) {
      * @param string $dir
      * @return string
      */
-    function file_replace(string $file, array $replacements, string $destination = null, string $dir = __DIR__)
+    function file_replace(string $file, array $replacements, ?string $destination = null, string $dir = __DIR__)
     {
         $contents = default_file($file, $dir);
 
